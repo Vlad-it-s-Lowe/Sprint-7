@@ -1,12 +1,13 @@
 import pytest
-import requests
 import allure
-from utils.helpers import generate_random_string
-from config import URLS
+from api_client import OrdersClient
+from helpers import generate_random_string
 
 
 @allure.feature('Управление заказами')
 class TestOrders:
+    orders_client = OrdersClient()
+
     @allure.story('Создание заказа')
     @allure.title('Создание заказа с цветами: {colors}')
     @pytest.mark.parametrize("colors", [
@@ -15,7 +16,6 @@ class TestOrders:
         ["BLACK", "GREY"],
         [],
     ])
-    # Тест создания заказов с разными цветами
     def test_create_order(self, colors):
         with allure.step('Подготавливаем данные для создания заказа'):
             payload = {
@@ -31,7 +31,7 @@ class TestOrders:
             }
 
         with allure.step('Отправляем POST-запрос на создание заказа'):
-            response = requests.post(URLS.URL_ORDERS, json=payload)
+            response = self.orders_client.create_order(payload)
 
         with allure.step('Проверяем, что код ответа равен 201'):
             assert response.status_code == 201, f"Ошибка создания заказа: {response.status_code}"
@@ -41,7 +41,6 @@ class TestOrders:
 
     @allure.story('Получение заказов')
     @allure.title('Получение списка заказов')
-    # Тест получения списка заказов с фильтрацией
     def test_get_orders(self):
         with allure.step('Подготавливаем параметры запроса'):
             params = {
@@ -51,7 +50,7 @@ class TestOrders:
             }
 
         with allure.step('Отправляем GET-запрос на получение списка заказов'):
-            response = requests.get(URLS.URL_ORDERS, params=params)
+            response = self.orders_client.get_orders(params=params)
 
         with allure.step('Проверяем, что код ответа равен 200'):
             assert response.status_code == 200, f"Ожидался статус 200, но получен {response.status_code}"
