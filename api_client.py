@@ -9,13 +9,13 @@ class BaseApiClient:
 
 class CourierClient(BaseApiClient):
     def __init__(self):
-        super().__init__(URLS.URL_COURIER) #  использовать URLS.URL_COURIER
-        self.login_url = URLS.URL_COURIER_LOGIN # добавить
+        super().__init__(URLS.URL_COURIER)
+        self.login_url = URLS.URL_COURIER_LOGIN
     def create_courier(self, payload):
         return requests.post(self.base_url, json=payload)
 
     def login_courier(self, payload):
-        return requests.post(self.login_url, json=payload) # использовать login_url
+        return requests.post(self.login_url, json=payload)
 
     def delete_courier(self, courier_id):
         return requests.delete(f"{self.base_url}/{courier_id}")
